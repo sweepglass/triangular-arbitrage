@@ -1,4 +1,4 @@
-import { BigNumber } from 'bignumber.js';
+﻿import { BigNumber } from 'bignumber.js';
 import * as ccxt from 'ccxt';
 import { logger, Helper } from '../common';
 import { ApiHandler } from '../api-handler';
@@ -95,13 +95,13 @@ export class Mocker extends ApiHandler {
     // 检查最小交易数量
     let minAmount;
     if (triangle.a.coinFrom.toUpperCase() !== 'BTC') {
-      minAmount = Helper.convertAmount(triangle.a.price, priceScale.cost, triangle.a.side).times(1.2);
+      minAmount = Helper.convertAmount(triangle.a.price, priceScale.cost, triangle.a.side).times(1.1);
     } else {
       minAmount = Helper.getConvertedAmount({
         side: triangle.a.side,
         exchangeRate: triangle.a.price,
         amount: priceScale.cost
-      }).times(1.2);
+      }).times(1.1);
     }
 
     if (triangle.a.side === 'sell' && free.isLessThanOrEqualTo(minAmount)) {

@@ -26,7 +26,7 @@ export class Order extends ApiHandler {
         const order = <types.IOrder>{
           symbol: testTrade.a.pair,
           side: testTrade.a.side.toLowerCase(),
-          type: 'limit',
+          type: 'market',
           price: testTrade.a.price,
           amount: testTrade.a.amount,
         };
@@ -91,7 +91,7 @@ export class Order extends ApiHandler {
         const order = <types.IOrder>{
           symbol: tradeB.pair,
           side: tradeB.side.toLowerCase(),
-          type: 'limit',
+          type: 'market',
           price: tradeB.price,
           amount: tradeB.amount,
         };
@@ -157,7 +157,7 @@ export class Order extends ApiHandler {
         const order = <types.IOrder>{
           symbol: tradeC.pair,
           side: tradeC.side.toLowerCase(),
-          type: 'limit',
+          type: 'market',
           price: tradeC.price,
           amount: tradeC.amount,
         };
