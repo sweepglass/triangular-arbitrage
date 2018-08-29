@@ -95,13 +95,13 @@ export class Mocker extends ApiHandler {
     // 检查最小交易数量
     let minAmount;
     if (triangle.a.coinFrom.toUpperCase() !== 'BTC') {
-      minAmount = Helper.convertAmount(triangle.a.price, priceScale.cost, triangle.a.side).times(1.1);
+      minAmount = Helper.convertAmount(triangle.a.price, priceScale.cost, triangle.a.side).times(1.2);
     } else {
       minAmount = Helper.getConvertedAmount({
         side: triangle.a.side,
         exchangeRate: triangle.a.price,
         amount: priceScale.cost
-      }).times(1.1);
+      }).times(1.2);
     }
 
     if (triangle.a.side === 'sell' && free.isLessThanOrEqualTo(minAmount)) {
