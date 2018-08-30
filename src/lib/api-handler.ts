@@ -27,7 +27,7 @@ export class ApiHandler {
     }
     const asset = balances[coin];
     if (!asset) {
-      logger.debug(`未查找到持有${coin}！！`);
+      logger.debug(`Not found to hold${coin}！！`);
       return;
     }
     return asset.free;

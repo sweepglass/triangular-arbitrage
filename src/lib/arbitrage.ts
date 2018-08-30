@@ -45,11 +45,11 @@ export class TriangularArbitrage extends Event {
         this.worker = setInterval(this.estimate.bind(this), config.arbitrage.interval * 1000);
       }
 
-      logger.info('----- 机器人启动完成 -----');
+      logger.info('----- Robot startup completed -----');
     } catch (err) {
-      logger.error(`机器人运行出错(${Helper.endTimer(timer)}): ${err}`);
+      logger.error(`Robot running error(${Helper.endTimer(timer)}): ${err}`);
     }
-    logger.debug(`启动三角套利机器人[终了] ${Helper.endTimer(timer)}`);
+    logger.debug(`Start the triangle arbitrage robot [end] ${Helper.endTimer(timer)}`);
   }
 
   destroy() {
@@ -60,7 +60,7 @@ export class TriangularArbitrage extends Event {
 
   public async initExchange(exchangeId: types.ExchangeId) {
     const timer = Helper.getTimer();
-    logger.debug('初始化交易所[启动]');
+    logger.debug('Initialize the exchange [start]');
     try {
       // 查看是否已初始化api
       if (this.exchanges.get(exchangeId)) {
@@ -93,18 +93,18 @@ export class TriangularArbitrage extends Event {
         }
       }
       this.exchanges.set(exchangeId, exchange);
-      logger.debug(`初始化交易所[终了] ${Helper.endTimer(timer)}`);
+      logger.debug(`Initialize the exchange [end] ${Helper.endTimer(timer)}`);
     } catch (err) {
-      logger.error(`初始化交易所[异常](${Helper.endTimer(timer)}): ${err}`);
+      logger.error(`Initialize the exchange [abnormal](${Helper.endTimer(timer)}): ${err}`);
     }
   }
 
   // 套利测算
   async estimate(tickers?: types.Binance24HrTicker[]) {
     const timer = Helper.getTimer();
-    logger.debug('监视行情[开始]');
+    logger.debug('Monitor the market [start]');
     try {
-      // logger.info(clc.magentaBright('----- 套利测算 -----'));
+       logger.info(clc.magentaBright('----- Arbitrage calculation-----'));
       const exchange = this.exchanges.get(this.activeExchangeId);
       if (!exchange) {
         return;
@@ -126,7 +126,8 @@ export class TriangularArbitrage extends Event {
       }
       // 更新套利数据
       if (ranks[0]) {
-        // logger.info(`选出套利组合第一名：${candidates[0].id}, 预测利率(扣除手续费): ${ranks[0].profitRate[0]}`);
+         // tslint:disable-next-line:max-line-length
+         logger.info(`Pick the first place in the arbitrage combination：${candidates[0].id}, Forecast interest rate (deducting handling fee) ${ranks[0].profitRate[0]}`);
         // 执行三角套利
         this.emit('placeOrder', exchange, candidates[0]);
       }
@@ -137,9 +138,9 @@ export class TriangularArbitrage extends Event {
         const path = candidate.id.length < 15 ? candidate.id + ' '.repeat(15 - candidate.id.length) : candidate.id;
         logger.info(`路径：${clc.cyanBright(path)} 利率: ${clcRate}`);
       }*/
-      logger.debug(`监视行情[终了] ${Helper.endTimer(timer)}`);
+      logger.debug(`Monitor the market [final] ${Helper.endTimer(timer)}`);
     } catch (err) {
-      logger.error(`监视行情[异常](${Helper.endTimer(timer)}): ${JSON.stringify(err)}`);
+      logger.error(`Monitoring market [abnormal](${Helper.endTimer(timer)}): ${JSON.stringify(err)}`);
     }
   }
 }

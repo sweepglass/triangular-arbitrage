@@ -11,7 +11,7 @@ const testCreateOrder = async () => {
     symbol: 'ETH/BTC', // symbol in CCXT format
     amount: 0.014, // amount of base currency
     price: 0.077845, // float price in quote currency
-    type: 'limit', // order type, 'market', 'limit' or undefined/None/null
+    type: 'market', // order type, 'market', 'limit' or undefined/None/null
     side: 'buy',
   };
   const res = await api.createOrder(exchange, order);

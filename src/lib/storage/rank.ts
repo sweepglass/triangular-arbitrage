@@ -12,7 +12,7 @@ export class Rank extends StorageBase {
 
   async putRanks(ranks: types.IRank[]) {
     try {
-      logger.info('存入排行数据，大小：' + ranks.length);
+      logger.info('Save the ranking data, size：' + ranks.length);
       const docs = await this.allDocs({
         include_docs: true,
         attachments: true,
@@ -38,7 +38,7 @@ export class Rank extends StorageBase {
       }
       return await this.bulkDocs(ranks);
     } catch (err) {
-      logger.error(`存储排行数据出错: ${err.message}`);
+      logger.error(`Error storing row data: ${err.message}`);
     }
   }
 }

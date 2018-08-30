@@ -40,17 +40,17 @@ export class Trading {
       const testTrade = await this.testOrder(exchange, triangle);
       // 未通过检查时返回
       if (!testTrade || !testTrade.id) {
-        // logger.info(`套利组合未通过可行性检测！！`);
+         logger.info(`The arbitrage combination failed the feasibility test! !`);
         return;
       }
 
       if (config.trading.mock) {
-        logger.info('配置为模拟交易，终止真实交易！');
+        logger.info('Configure to simulate trading and terminate real trading!');
         return;
       }
 
-      logger.info('----- 套利开始 -----');
-      logger.info(`路径：${clc.cyanBright(triangle.id)} 利率: ${triangle.rate}`);
+      logger.info('----- Arbitrage begins -----');
+      logger.info(`Route：${clc.cyanBright(triangle.id)} interest rate: ${triangle.rate}`);
 
       // 放入交易队列
       const queueId = await this.storage.openTradingSession({
@@ -64,7 +64,7 @@ export class Trading {
       // 执行a点订单
       await this.order.orderA(exchange, testTrade);
     } catch (err) {
-      logger.error(`处理订单出错： ${err.message ? err.message : err.msg}`);
+      logger.error(`Processing order error： ${err.message ? err.message : err.msg}`);
       // 退出交易队列
       // await this.storage.clearQueue(triangle.id, exchange.id);
     }

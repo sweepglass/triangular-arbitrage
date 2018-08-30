@@ -20,9 +20,9 @@ export class Order extends ApiHandler {
       // 已下单时跳过
       if (!testTrade.a.orderId) {
         // 获取交易额度
-        logger.info(`第一步：${clc.blueBright(testTrade.a.pair)}`);
+        logger.info(`first step：${clc.blueBright(testTrade.a.pair)}`);
         testTrade.a.timecost = '';
-        logger.info(`限价：${testTrade.a.price}, 数量：${testTrade.a.amount}, 方向：${testTrade.a.side}`);
+        logger.info(`Limit price：${testTrade.a.price}, Quantity：${testTrade.a.amount}, direction：${testTrade.a.side}`);
         const order = <types.IOrder>{
           symbol: testTrade.a.pair,
           side: testTrade.a.side.toLowerCase(),
@@ -34,7 +34,7 @@ export class Order extends ApiHandler {
         if (!orderInfo) {
           return;
         }
-        logger.debug(`下单返回值: ${JSON.stringify(orderInfo, null, 2)}`);
+        logger.debug(`Order return value: ${JSON.stringify(orderInfo, null, 2)}`);
 
         testTrade.a.status = orderInfo.status;
         testTrade.a.orderId = orderInfo.id;
@@ -43,12 +43,12 @@ export class Order extends ApiHandler {
         await this.storage.updateTradingSession(testTrade, 0);
       }
       const nextB = async () => {
-        logger.info('执行nextB...');
+        logger.info('Executing next B...');
         const orderRes = await this.queryOrder(exchange, testTrade.a.orderId, testTrade.a.pair);
         if (!orderRes) {
           return false;
         }
-        logger.info(`查询订单状态： ${orderRes.status}`);
+        logger.info(`Query order status： ${orderRes.status}`);
         // 交易成功时
         if (orderRes.status === 'closed') {
           testTrade.a.timecost = Helper.endTimer(timer);
@@ -69,12 +69,12 @@ export class Order extends ApiHandler {
 
       // 订单未成交时
       if (!await nextB()) {
-        logger.info('订单未成交,每秒循环执行。');
+        logger.info('The order is not filled and is executed cyclically every second.');
         this.worker = setInterval(nextB.bind(this), 1000);
       }
     } catch (err) {
       const errMsg = err.message ? err.message : err.msg;
-      logger.error(`订单A出错： ${errMsg}`);
+      logger.error(`Order A error： ${errMsg}`);
       await this.errorHandle(testTrade.queueId, errMsg);
     }
   }
@@ -86,8 +86,8 @@ export class Order extends ApiHandler {
       // 已下单时跳过
       if (!tradeB.orderId) {
 
-        logger.info(`第二步：${clc.blueBright(trade.b.pair)}`);
-        logger.info(`限价：${tradeB.price}, 数量：${tradeB.amount}, 方向：${tradeB.side}`);
+        logger.info(`Second step：${clc.blueBright(trade.b.pair)}`);
+        logger.info(`Limit price：${tradeB.price}, Quantity：${tradeB.amount}, direction：${tradeB.side}`);
         const order = <types.IOrder>{
           symbol: tradeB.pair,
           side: tradeB.side.toLowerCase(),
@@ -99,7 +99,7 @@ export class Order extends ApiHandler {
         if (!orderInfo) {
           return;
         }
-        logger.debug(`下单返回值: ${JSON.stringify(orderInfo, null, 2)}`);
+        logger.debug(`Order return value: ${JSON.stringify(orderInfo, null, 2)}`);
 
         trade.b.status = <any>orderInfo.status;
         trade.b.orderId = orderInfo.id;
@@ -107,13 +107,13 @@ export class Order extends ApiHandler {
         await this.storage.updateTradingSession(trade, 1);
       }
       const nextC = async () => {
-        logger.info('执行nextC...');
+        logger.info('Executing next C...');
 
         const orderRes = await this.queryOrder(exchange, tradeB.orderId, tradeB.pair);
         if (!orderRes) {
           return false;
         }
-        logger.info(`查询订单状态： ${orderRes.status}`);
+        logger.info(`Query order status： ${orderRes.status}`);
         // 交易成功时
         if (orderRes.status === 'closed') {
           if (this.worker) {
@@ -133,12 +133,12 @@ export class Order extends ApiHandler {
 
       // 订单未成交时
       if (!await nextC()) {
-        logger.info('订单未成交,每秒循环执行。');
+        logger.info('The order is not filled and is executed cyclically every second.');
         this.worker = setInterval(nextC.bind(this), 1000);
       }
     } catch (err) {
       const errMsg = err.message ? err.message : err.msg;
-      logger.error(`订单B出错： ${errMsg}`);
+      logger.error(`Order B error： ${errMsg}`);
       await this.errorHandle(trade.queueId, errMsg);
     }
   }
@@ -149,8 +149,8 @@ export class Order extends ApiHandler {
       const tradeC = trade.c;
       // 已下单时跳过
       if (!tradeC.orderId) {
-        logger.info(`第三步：${clc.blueBright(trade.c.pair)}`);
-        logger.info(`限价：${tradeC.price}, 数量：${tradeC.amount}, 方向：${tradeC.side}`);
+        logger.info(`third step：${clc.blueBright(trade.c.pair)}`);
+        logger.info(`Limit price：${tradeC.price}, Quantity：${tradeC.amount}, direction：${tradeC.side}`);
         if (tradeC.side.toLowerCase() === 'sell' && tradeC.amount > trade.b.amount) {
           tradeC.amount = trade.b.amount;
         }
@@ -165,7 +165,7 @@ export class Order extends ApiHandler {
         if (!orderInfo) {
           return;
         }
-        logger.debug(`下单返回值: ${JSON.stringify(orderInfo, null, 2)}`);
+        logger.debug(`Order return value: ${JSON.stringify(orderInfo, null, 2)}`);
 
         trade.c.status = orderInfo.status;
         trade.c.orderId = orderInfo.id;
@@ -173,18 +173,18 @@ export class Order extends ApiHandler {
         await this.storage.updateTradingSession(trade, 2);
       }
       const completedC = async () => {
-        logger.info('completedC...');
+        logger.info('completed C...');
         const orderRes = await this.queryOrder(exchange, tradeC.orderId, tradeC.pair);
         if (!orderRes) {
           return false;
         }
-        logger.info(`查询订单状态： ${orderRes.status}`);
+        logger.info(`Query order status： ${orderRes.status}`);
         // 交易成功时
         if (orderRes.status === 'closed') {
           if (this.worker) {
             clearInterval(this.worker);
           }
-          logger.info(`三角套利完成,最终获得：${orderRes.amount}...`);
+          logger.info(`Triangular arbitrage is completed and finally obtained：${orderRes.amount}...`);
           trade.c.timecost = Helper.endTimer(timer);
           // 修正数量
           trade.c.amount = orderRes.amount;
@@ -197,12 +197,12 @@ export class Order extends ApiHandler {
 
       // 订单未成交时
       if (!await completedC()) {
-        logger.info('订单未成交,每秒循环执行。');
+        logger.info('The order is not filled and is executed cyclically every second.');
         this.worker = setInterval(completedC.bind(this), 1000);
       }
     } catch (err) {
       const errMsg = err.message ? err.message : err.msg;
-      logger.error(`订单C出错： ${errMsg}`);
+      logger.error(`Order C error： ${errMsg}`);
       await this.errorHandle(trade.queueId, errMsg);
     }
   }

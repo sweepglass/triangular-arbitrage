@@ -22,12 +22,12 @@ export class Daemon {
 
   // 重启套利流程
   private async reboot(exchange: types.IExchange, trade: types.ITradeTriangle, queue: types.IQueue) {
-    logger.info('----- 继续前次套利 -----');
-    logger.info(`路径：${clc.cyanBright(trade.id)} 利率: ${trade.rate}`);
+    logger.info('----- Continue the previous arbitrage -----');
+    logger.info(`Route：${clc.cyanBright(trade.id)} interest rate: ${trade.rate}`);
     // 第一步
     if (queue.step === 0) {
       if (!trade.a.orderId) {
-        logger.info('A点订单为空，退出交易队列！');
+        logger.info('A point order is empty, exit the trading queue!');
         // 退出交易队列
         await this.storage.clearQueue(trade.id, exchange.id);
       } else {

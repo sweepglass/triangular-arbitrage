@@ -59,16 +59,16 @@ export class Mocker extends ApiHandler {
 
   // 订单执行前，可行性检查
   async testOrder(exchange: types.IExchange, triangle: types.ITriangle) {
-    // logger.info(`三角套利组合：${triangle.id}, 订单可行性检测...`);
+     logger.info(`Triangular arbitrage combination：${triangle.id}, Order feasibility test...`);
     if (!exchange.endpoint.private || !exchange.pairs) {
-      logger.error('交易所相关参数出错！！');
+      logger.error('Exchange related parameters are wrong! !');
       return;
     }
 
     // 查询资产
     const balances = await this.getBalance(exchange);
     if (!balances) {
-      logger.debug('未查找到持有资产！！');
+      logger.debug('Not found holding assets! !');
       return;
     }
 
@@ -79,12 +79,12 @@ export class Mocker extends ApiHandler {
 
     const asset = balances[tradeTriangle.coin];
     if (!asset) {
-      logger.debug(`未查找到持有${tradeTriangle.coin}！！`);
+      logger.debug(`Not found to hold${tradeTriangle.coin}！！`);
       return;
     }
     const free = new BigNumber(asset.free);
     if (free.isZero()) {
-      logger.debug(`未查找到持有${tradeTriangle.coin}！！`);
+      logger.debug(`Not found to hold${tradeTriangle.coin}！！`);
       return;
     }
     // 获取交易精度
@@ -105,7 +105,7 @@ export class Mocker extends ApiHandler {
     }
 
     if (triangle.a.side === 'sell' && free.isLessThanOrEqualTo(minAmount)) {
-     // logger.debug(`持有${free + ' ' + triangle.a.coinFrom},小于最低交易数量（${minAmount}）！！`);
+      logger.debug(`hold${free + ' ' + triangle.a.coinFrom},Less than the minimum number of transactions（${minAmount}）！！`);
       return;
     }
     // 查找最佳交易量
@@ -169,7 +169,8 @@ export class Mocker extends ApiHandler {
     // 利润
     tradeTriangle.profit = profit.toFixed(8);
     if (profit.isLessThanOrEqualTo(0)) {
-      // logger.info(`订单可行性检测结果，利润(${clc.redBright(tradeTriangle.profit)})为负数，终止下单！`);
+       // tslint:disable-next-line:max-line-length
+       logger.info(`Order feasibility test result, profit(${clc.redBright(tradeTriangle.profit)})For negative numbers, stop placing orders!`);
       return tradeTriangle;
     }
     tradeTriangle.id = triangle.id;
@@ -180,10 +181,10 @@ export class Mocker extends ApiHandler {
         .times(100)
         .toFixed(3) + '%';
     tradeTriangle.ts = Date.now();
-    logger.info(clc.yellowBright('----- 模拟交易结果 -----'));
-    logger.info(`套利货币：${tradeTriangle.coin}`);
-    logger.info(`套利前资产：${tradeTriangle.before}, 套利后资产：${tradeTriangle.after}`);
-    logger.info(`利润：${clc.greenBright(tradeTriangle.profit)}, 利率：${clc.greenBright(tradeTriangle.rate)}`);
+    logger.info(clc.yellowBright('----- Simulated trading results -----'));
+    logger.info(`Arbitrage currency：${tradeTriangle.coin}`);
+    logger.info(`Arbitrage assets：${tradeTriangle.before}, Arbitrage assets：${tradeTriangle.after}`);
+    logger.info(`profit：${clc.greenBright(tradeTriangle.profit)}, interest rate：${clc.greenBright(tradeTriangle.rate)}`);
     return tradeTriangle;
   }
 }

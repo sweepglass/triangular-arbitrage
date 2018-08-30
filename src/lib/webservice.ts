@@ -22,12 +22,12 @@ export class WebService {
     try {
       const that = this;
       io.on('connection', (socket: any) => {
-        logger.info('客户端已连接 !');
+        logger.info('The client is connected!');
 
         that.connected.push(socket);
         socket.on('disconnect', (client: any) => {
           // when client disconnects
-          logger.info('客户端断开连接 !');
+          logger.info('The client is disconnected!');
           const index = that.connected.indexOf(client);
           that.connected.splice(index, 1); // remove client from the list of connected clients
         });
@@ -40,8 +40,8 @@ export class WebService {
       app.use('/', express.static(path.resolve(__dirname, '../../..') + '/public')); // serve js and css static files in public
 
       server.listen(port, () => {
-        logger.info('服务已开启！');
-        logger.info('请使用浏览器打开: http://127.0.0.1:' + port);
+        logger.info('The service is already open!');
+        logger.info('Please use a browser to open: http://127.0.0.1:' + port);
         that.storage.rank.onChanged(async (change: any) => {
           const docs = await that.storage.rank.getAllDocs();
           for (const ws of that.connected) {
@@ -52,7 +52,7 @@ export class WebService {
         });
       });
     } catch (err) {
-      logger.error(`启动web服务出错: ${err}`);
+      logger.error(`Error starting web service: ${err}`);
     }
   }
 }
